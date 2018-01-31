@@ -41,6 +41,10 @@ class Interpreter(object):
         self.current_token = None
 
     def error(self):
+        '''
+        输入异常
+        :return:
+        '''
         raise Exception('输入有误')
 
     def get_next_token(self):
