@@ -85,16 +85,19 @@ class Interpreter(object):
     def expr(self):
         '''
         整数值的计算
-        :return:
+        :return: 返回计算结果
         '''
         self.current_token = self.get_next_token()
 
+        # 左边的数
         left = self.current_token
         self.get_token(INTEGER)
 
+        # 运算符操作
         opt = self.current_token
         self.get_token(PLUS)
 
+        # 右边的数
         right = self.current_token
         self.get_token(INTEGER)
 
