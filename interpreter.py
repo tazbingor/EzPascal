@@ -70,3 +70,35 @@ class Interpreter(object):
             return token
 
         self.error()
+
+    def get_token(self, token_type):
+        '''
+        获得当前token的类型
+        :param token_type:
+        :return:
+        '''
+        if self.current_token.type == token_type:
+            self.current_token = self.get_next_token()
+        else:
+            self.error()
+
+    def expr(self):
+        '''
+        整数值的计算
+        :return:
+        '''
+        self.current_token = self.get_next_token()
+
+        left = self.current_token
+        self.get_token(INTEGER)
+
+        opt = self.current_token
+        self.get_token(PLUS)
+
+        right = self.current_token
+        self.get_token(INTEGER)
+
+        result = left.value + right.value
+
+        return result
+
