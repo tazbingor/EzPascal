@@ -31,6 +31,8 @@ class Token(object):
 
 
 class Interpreter(object):
+    '''解释器'''
+
     def __init__(self, text):
         '''
         初始化
@@ -42,7 +44,7 @@ class Interpreter(object):
 
     def error(self):
         '''
-        输入异常
+        异常提示
         :return:
         '''
         raise Exception('输入有误')
@@ -104,4 +106,3 @@ class Interpreter(object):
         result = left.value + right.value
 
         return result
-
