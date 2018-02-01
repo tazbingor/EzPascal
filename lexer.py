@@ -9,6 +9,8 @@ PLUS = 'PLUS'
 MINUS = 'MINUS'
 MULTIPLY = 'MULTIPLY'
 DIVISION = 'DIVISION'
+LPAREN = '('
+RPAREN = ')'
 
 
 class Lexer(object):
@@ -76,6 +78,14 @@ class Lexer(object):
             if self.current_char == '/':
                 self.advance()
                 return Token(DIVISION, '/')
+
+            if self.current_char == '(':
+                self.advance()
+                return Token(LPAREN, '(')
+
+            if self.current_char == ')':
+                self.advance()
+                return Token(RPAREN, ')')
 
             self.error()
 

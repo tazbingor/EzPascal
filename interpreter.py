@@ -7,6 +7,8 @@ PLUS = 'PLUS'
 MINUS = 'MINUS'
 MULTIPLY = 'MULTIPLY'
 DIVISION = 'DIVISION'
+LPAREN = '('
+RPAREN = ')'
 
 
 class Token(object):
@@ -62,8 +64,14 @@ class Interpreter(object):
 
     def factor(self):
         token = self.current_token
-        self.get_token(INTEGER)
-        return token.value
+        if token.type == INTEGER:
+            self.get_token(INTEGER)
+            return token.value
+        elif token.type == LPAREN:
+            self.get_token(LPAREN)
+            result = self.expr()
+            self.get_token(RPAREN)
+            return result
 
     def term(self):
         '''
@@ -87,7 +95,7 @@ class Interpreter(object):
         加减运算
         :return: 返回计算结果
         '''
-        result = self.factor()
+        result = self.term()
 
         while self.current_token.type in (PLUS, MINUS):
             token = self.current_token
