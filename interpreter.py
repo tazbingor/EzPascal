@@ -65,26 +65,37 @@ class Interpreter(object):
         self.get_token(INTEGER)
         return token.value
 
-    def expr(self):
+    def term(self):
         '''
-        整数值的计算
-        :return: 返回计算结果
+        乘除运算
+        :return:
         '''
         result = self.factor()
-
-        while self.current_token.type in (PLUS, MINUS, MULTIPLY, DIVISION):
+        while self.current_token.type in (MULTIPLY, DIVISION):
             token = self.current_token
-            if token.type == PLUS:
-                self.get_token(PLUS)
-                result = result + self.factor()
-            elif token.type == MINUS:
-                self.get_token(MINUS)
-                result = result - self.factor()
-            elif token.type == MULTIPLY:
+            if token.type == MULTIPLY:
                 self.get_token(MULTIPLY)
                 result = result * self.factor()
             elif token.type == DIVISION:
                 self.get_token(DIVISION)
                 result = result / self.factor()
+
+        return result
+
+    def expr(self):
+        '''
+        加减运算
+        :return: 返回计算结果
+        '''
+        result = self.factor()
+
+        while self.current_token.type in (PLUS, MINUS):
+            token = self.current_token
+            if token.type == PLUS:
+                self.get_token(PLUS)
+                result = result + self.term()
+            elif token.type == MINUS:
+                self.get_token(MINUS)
+                result = result - self.term()
 
         return result
