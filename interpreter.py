@@ -36,15 +36,9 @@ class Token(object):
 class Interpreter(object):
     '''解释器'''
 
-    def __init__(self, text):
-        '''
-        初始化
-        :param text: 需要解析的文本
-        '''
-        self.text = text
-        self.pos = 0
-        self.current_token = None
-        self.current_char = self.text[self.pos]
+    def __init__(self, lexer):
+        self.lexer = lexer
+        self.current_token = self.lexer.get_next_token()
 
     def error(self):
         '''
@@ -52,43 +46,6 @@ class Interpreter(object):
         :return:
         '''
         raise Exception('输入有误')
-
-    def get_next_token(self):
-        '''
-        分词器
-        :return:token格式化对象
-        '''
-        while self.current_char is not None:
-
-            # 检测空格
-            if self.current_char.isspace():
-                self.skip_whitespace()
-                continue
-
-            # 检测整数
-            if self.current_char.isdigit():
-                return Token(INTEGER, self.integer())
-
-            # OPT
-            if self.current_char == '+':
-                self.advance()
-                return Token(PLUS, '+')
-
-            if self.current_char == '-':
-                self.advance()
-                return Token(MINUS, '-')
-
-            if self.current_char == '*':
-                self.advance()
-                return Token(MULTIPLY, '*')
-
-            if self.current_char == '/':
-                self.advance()
-                return Token(DIVISION, '/')
-
-            self.error()
-
-        return Token(EOF, None)
 
     def get_token(self, token_type):
         '''
@@ -99,11 +56,11 @@ class Interpreter(object):
         # print token_type
         # print self.current_token.type
         if self.current_token.type == token_type:
-            self.current_token = self.get_next_token()
+            self.current_token = self.lexer.get_next_token()
         else:
             self.error()
 
-    def term(self):
+    def factor(self):
         token = self.current_token
         self.get_token(INTEGER)
         return token.value
@@ -113,63 +70,21 @@ class Interpreter(object):
         整数值的计算
         :return: 返回计算结果
         '''
+        result = self.factor()
 
-        self.current_token = self.get_next_token()
-        result = self.term()
         while self.current_token.type in (PLUS, MINUS, MULTIPLY, DIVISION):
             token = self.current_token
             if token.type == PLUS:
                 self.get_token(PLUS)
-                result = result + self.term()
+                result = result + self.factor()
             elif token.type == MINUS:
                 self.get_token(MINUS)
-                result = result - self.term()
+                result = result - self.factor()
+            elif token.type == MULTIPLY:
+                self.get_token(MULTIPLY)
+                result = result * self.factor()
+            elif token.type == DIVISION:
+                self.get_token(DIVISION)
+                result = result / self.factor()
 
         return result
-
-    # def set_operation(self, opt_str):
-    #     if opt_str == PLUS:
-    #         self.get_token(PLUS)
-    #     elif opt_str == MINUS:
-    #         self.get_token(MINUS)
-    #     elif opt_str == MULTIPLY:
-    #         self.get_token(MULTIPLY)
-    #     elif opt_str == DIVISION:
-    #         self.get_token(DIVISION)
-
-    def calculator(self, num1, num2, opt):
-        result = 0
-        self.get_token(opt)
-        if opt.type == PLUS:
-            result = num1 + num2
-        elif opt.type == MINUS:
-            result = num1 - num2
-        elif opt.type == MULTIPLY:
-            result = num1 * num2
-        elif opt.type == DIVISION:
-            result = num1 / num2
-
-        return result
-
-    def advance(self):
-        self.pos += 1
-        if self.pos > len(self.text) - 1:
-            self.current_char = None
-        else:
-            self.current_char = self.text[self.pos]
-
-    def skip_whitespace(self):
-        while self.current_char is not None \
-                and self.current_char.isspace():
-            self.advance()
-
-    def integer(self):
-        '''
-        :return: 返回一位甚至多位的整型
-        '''
-        result = ''
-        while self.current_char is not None \
-                and self.current_char.isdigit():
-            result += self.current_char
-            self.advance()
-        return int(result)
