@@ -96,45 +96,50 @@ class Interpreter(object):
         :param token_type:
         :return:
         '''
+        # print token_type
+        # print self.current_token.type
         if self.current_token.type == token_type:
             self.current_token = self.get_next_token()
         else:
             self.error()
+
+    def term(self):
+        token = self.current_token
+        self.get_token(INTEGER)
+        return token.value
 
     def expr(self):
         '''
         整数值的计算
         :return: 返回计算结果
         '''
+
         self.current_token = self.get_next_token()
+        result = self.term()
+        while self.current_token.type in (PLUS, MINUS, MULTIPLY, DIVISION):
+            token = self.current_token
+            if token.type == PLUS:
+                self.get_token(PLUS)
+                result = result + self.term()
+            elif token.type == MINUS:
+                self.get_token(MINUS)
+                result = result - self.term()
 
-        # 左边的数
-        left = self.current_token
-        self.get_token(INTEGER)
+        return result
 
-        # 运算符操作
-        opt = self.current_token
-        self.set_operation(opt.type)
-
-        # 右边的数
-        right = self.current_token
-        self.get_token(INTEGER)
-
-        # 计算器
-        return self.calculator(left.value, right.value, opt)
-
-    def set_operation(self, opt_str):
-        if opt_str == PLUS:
-            self.get_token(PLUS)
-        elif opt_str == MINUS:
-            self.get_token(MINUS)
-        elif opt_str == MULTIPLY:
-            self.get_token(MULTIPLY)
-        elif opt_str == DIVISION:
-            self.get_token(DIVISION)
+    # def set_operation(self, opt_str):
+    #     if opt_str == PLUS:
+    #         self.get_token(PLUS)
+    #     elif opt_str == MINUS:
+    #         self.get_token(MINUS)
+    #     elif opt_str == MULTIPLY:
+    #         self.get_token(MULTIPLY)
+    #     elif opt_str == DIVISION:
+    #         self.get_token(DIVISION)
 
     def calculator(self, num1, num2, opt):
         result = 0
+        self.get_token(opt)
         if opt.type == PLUS:
             result = num1 + num2
         elif opt.type == MINUS:

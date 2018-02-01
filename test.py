@@ -7,7 +7,10 @@ from interpreter import Interpreter
 def main():
     while True:
         try:
-            text = raw_input('ezpas> ')
+            try:
+                text = raw_input('ezpas>> ')
+            except NameError:
+                text = input('ezpas>> ')
         except EOFError:
             break
 
