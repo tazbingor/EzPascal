@@ -114,10 +114,7 @@ class Interpreter(object):
 
         # 运算符操作
         opt = self.current_token
-        if opt.type == PLUS:
-            self.get_token(PLUS)
-        else:
-            self.get_token(MINUS)
+        self.set_operation(opt.type)
 
         # 右边的数
         right = self.current_token
@@ -125,6 +122,16 @@ class Interpreter(object):
 
         # 计算器
         return self.calculator(left.value, right.value, opt)
+
+    def set_operation(self, opt_str):
+        if opt_str == PLUS:
+            self.get_token(PLUS)
+        elif opt_str == MINUS:
+            self.get_token(MINUS)
+        elif opt_str == MULTIPLY:
+            self.get_token(MULTIPLY)
+        elif opt_str == DIVISION:
+            self.get_token(DIVISION)
 
     def calculator(self, num1, num2, opt):
         result = 0
